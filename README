@@ -1,14 +1,15 @@
-What's this?
-This is a package to add support for dar archives to the Midnight 
-Commander.
 
-How to add dar archive handling to Midnight Commander.
-1) Copy the file udar to the $MCDIR/extfs/ directory.
-2) Add the contents of addextfs.ini to the $MCDIR/extfs/extfs.ini file.
-3) Add the contents of addbindings to $HOME/.mc/bindings if this file 
-   is present. If this file is not present you can create one by choosing 
-   "Command" "Edit extension file". To have dar support for all users one 
-   might want to add the contents to the $MCDIR/mc.ext file.
+Fork - https://sourceforge.net/p/dar/mailman/message/1043472/ (https://mail.gnome.org/archives/mc-devel/2006-April/msg00001.html)
 
-N.B. $MCDIR is the directory where all global Midnight Commander settings 
-     are stored. The location can be found by typing "mc -f".
+
+== INSTALL ==
+
+1. Put udar from extfs.d to $(libexecdir)/mc/extfs.d/ or in ~/.mc/extfs.d/
+
+Ubuntu:
+* /usr/lib/mc/extfs.d
+
+2. Add content mc.ext.
+
+mc.ext >> /etc/mc/mc.ext or mc.ext >> ~/.mc.ext
+

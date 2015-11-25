@@ -3,7 +3,7 @@
 # This is a parser for Dar archives in Midnight Commander. You need
 # the GPL dar program (version >= 2.3.0) written by Denis Corbin.
 
-# Author: Guus Jansman
+# Author: Guus Jansman (mod Alexey Matveev)
 
 # Limitations:
 # - The archive file can not be changed
@@ -19,62 +19,42 @@ BASENAME="`echo "$2" | sed -e 's/\.[0-9]*\.[Dd][Aa][Rr]$//'`"
 
 mcdarfs_list ()
 {
+
 $DAR -l "$BASENAME" -N -Q -as 2>/dev/null | gawk -v uuid=${UID-0} '
-BEGIN { flag=0 }
-/^-------/ { flag++; if (flag > 1) exit 0; next }
+BEGIN {}
+/^-------/ { next }
 /^$/ { next }
 {
-    if (flag == 0) next
+    if (NR == 1) next
+
     line=$0
-    split(line, record, " ")
 
-    # Do not display removed files
-    if (record[1] == "[" && record[2] == "REMOVED")
+    split(line, record, "] ")
+
+    if ( record[1] != "[Saved") 
     {
         next
     }
 
-    # We want "line" to start with permutation
-    # TODO: better algorithm
-    while (length(record[1]) != 10 || match(substr(record[1], 2, 1), "[r-]") == 0)
-    {
-        # line without real contents
-        if (length(line) == 0) {
-            next
-        }
-        line=substr(line, length(record[1])+1)
-        while (length(line) != 0 && substr(line, 1, 1) != " ")
-        {
-            line=substr(line, 2)
-        }
-        split(line, record, " ")
-    }
+    split(record[3], record, " ")
 
-    perm=record[1]
-    # Block and character special files not supported
-    # Change [bc] to [bcl] if symbolic links should not show up either
-    if (match(substr(perm, 1, 1), "[bc]") != 0)
-    {
-        next
-    }
-    uid=record[2]
-    if (match(uid, "^[0-9]*$") != 0)
-    {
-        uid=sprintf("%-8d", uid)
-    }
-    gid=record[3]
-    if (match(gid, "^[0-9]*$") != 0)
-    {
-        gid=sprintf("%-8d", gid)
-    }
-    size=record[4]
-    month=record[6]
-    day=record[7]
-    tm=substr(record[8], 1, 5)
-    year=record[9]
-    name=substr(line, index(line, sprintf("%s:", tm))+14)
-    # TODO: find symbolic link target (probably the link has to be extracted)
-    printf "%s    1 %s %s %8d %3s %02d %04d %s %s\n", perm, uid, gid, size, month, day, year, tm, name
+    split(line, rec, "\t")
+    split(rec[4], date, " ")
+
+    perm = record[1]
+    uid = record[2]
+
+    gid = rec[2]
+    size = rec[3]
+    
+    month = date[2]
+    day = date[3]
+    year = date[5]
+    tm = substr(date[4], 1, 5)
+
+    name = rec[5]
+
+    printf "%s    1 %s %s %8d %3s %02d %04d %s\n", perm, uid, gid, size, month, day, year, name
 }'
 }
 

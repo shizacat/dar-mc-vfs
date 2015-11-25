@@ -1,4 +1,4 @@
 # dar
 regex/\.[0-9]*\.[Dd][Aa][Rr]$
-	Open=%cd %p#udar
+	Open=%cd %p/udar://
 	View=%view{ascii} dar -l `echo %f | sed 's/\.[0-9]*\.[Dd][Aa][Rr]$//'` -N
